@@ -1,19 +1,26 @@
-name: Run Node.js script on schedule and push
+name: Run Node.js script every hour
 
 on:
   schedule:
-    - cron: "*/1 * * * *"
-  push:
+    - cron: "0 * * * *" # Se ejecuta cada hora
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "20"
+          node-version: "14" # O la versión que necesites
+
+      - name: Install dependencies
+        run: |
+          npm install
+
       - name: Run script
-        run: node pluvis.js 
+
+        run: node your-script.js # Reemplaza 'your-script.js' con el nombre de tu script
