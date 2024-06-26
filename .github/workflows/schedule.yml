@@ -1,9 +1,8 @@
-name: Run Node.js script every hour
+name: Data AcuaEs
 
 on:
   schedule:
-    - cron: "0 * * * *" # Se ejecuta cada hora
-  push:
+    - cron: "0 */2 * * *" 
 
 jobs:
   run-script:
@@ -16,12 +15,16 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "20" # O la versión que necesites
+          node-version: "20"
 
       - name: Install dependencies
         run: |
           npm install
 
-      - name: Run script
+      - name: Catch Data Pluviometros
 
-        run: node pluvis.js 
+        run: node pluvis.js
+
+      - name: Catch Data Embalses
+
+        run: node datosEmbalses.js
