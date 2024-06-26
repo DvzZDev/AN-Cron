@@ -1,8 +1,9 @@
-name: Run Node.js script every 12 hours
+name: Run Node.js script on schedule and push
 
 on:
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "*/1 * * * *"
+  push:
 
 jobs:
   run-script:
