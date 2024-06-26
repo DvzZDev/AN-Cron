@@ -3,6 +3,7 @@ name: Run Node.js script every hour
 on:
   schedule:
     - cron: "0 * * * *" # Se ejecuta cada hora
+  push:
 
 jobs:
   run-script:
