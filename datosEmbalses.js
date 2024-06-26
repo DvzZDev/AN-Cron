@@ -1,4 +1,4 @@
-import { get } from "axios";
+import get from "axios";
 import { load } from "cheerio";
 import { createConnection } from "mysql2/promise";
 import { configure, getLogger } from "log4js";
