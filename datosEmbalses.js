@@ -1,7 +1,6 @@
 import get from "axios";
 import { load } from "cheerio";
 import { createConnection } from "mysql2/promise";
-import { configure, getLogger } from "log4js";
 
 async function main() {
   const fecha_modificacion = new Date().toISOString().slice(0, 19).replace("T", " ");
@@ -65,13 +64,6 @@ async function main() {
 
           const fila_seccion_divs = second_div.find("div.FilaSeccion");
 
-          configure({
-            appenders: { file: { type: "file", filename: "app.log" } },
-            categories: { default: { appenders: ["file"], level: "info" } },
-          });
-
-          const logger = getLogger();
-
           for (let k = 0; k < fila_seccion_divs.length; k++) {
             const fila_seccion_div = $(fila_seccion_divs[k]);
             const campo_div = fila_seccion_div.find("div.Campo");
@@ -88,33 +80,20 @@ async function main() {
               if (k === 0) {
                 var agua_embalsada = fila_datos[0].replace(".", "");
                 var agua_embalsada_por = fila_datos.length > 1 ? fila_datos[1] : null;
-                logger.info(
-                  `Iteración ${k}: agua_embalsada = ${agua_embalsada}, agua_embalsada_por = ${agua_embalsada_por}`
-                );
               } else if (k === 1) {
                 var variacion_ultima_semana = fila_datos[0];
                 var variacion_ultima_semana_por =
                   fila_datos.length > 1 ? fila_datos[1] : null;
-                logger.info(
-                  `Iteración ${k}: variacion_ultima_semana = ${variacion_ultima_semana}, variacion_ultima_semana_por = ${variacion_ultima_semana_por}`
-                );
               } else if (k === 2) {
                 var capacidad_total = fila_datos[0].replace(".", "");
-                logger.info(`Iteración ${k}: capacidad_total = ${capacidad_total}`);
               } else if (k === 3) {
                 var misma_semana_ultimo_año = fila_datos[0];
                 var misma_semana_ultimo_año_por =
                   fila_datos.length > 1 ? fila_datos[1] : null;
-                logger.info(
-                  `Iteración ${k}: misma_semana_ultimo_año = ${misma_semana_ultimo_año}, misma_semana_ultimo_año_por = ${misma_semana_ultimo_año_por}`
-                );
               } else if (k === 4) {
                 var misma_semana_10años = fila_datos[0];
                 var misma_semana_10años_por =
                   fila_datos.length > 1 ? fila_datos[1] : null;
-                logger.info(
-                  `Iteración ${k}: misma_semana_10años = ${misma_semana_10años}, misma_semana_10años_por = ${misma_semana_10años_por}`
-                );
               }
             }
           }
