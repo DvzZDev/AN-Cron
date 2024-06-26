@@ -24,4 +24,4 @@ jobs:
 
       - name: Run script
 
-        run: pluvis.js # Reemplaza 'your-script.js' con el nombre de tu script
+        run: node pluvis.js 
