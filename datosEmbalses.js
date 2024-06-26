@@ -1,12 +1,12 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
-const mysql = require("mysql2/promise");
-const log4js = require("log4js");
+import { get } from "axios";
+import { load } from "cheerio";
+import { createConnection } from "mysql2/promise";
+import { configure, getLogger } from "log4js";
 
 async function main() {
   const fecha_modificacion = new Date().toISOString().slice(0, 19).replace("T", " ");
 
-  const conn = await mysql.createConnection({
+  const conn = await createConnection({
     host: "gateway01.eu-central-1.prod.aws.tidbcloud.com",
     port: 4000,
     user: "DfWYA9vQa8C3KYP.root",
@@ -21,9 +21,9 @@ async function main() {
 
   const url = "https://www.embalses.net/cuencas.php";
 
-  const response = await axios.get(url);
+  const response = await get(url);
 
-  const $ = cheerio.load(response.data);
+  const $ = load(response.data);
 
   const table = $("table.Tabla");
 
@@ -35,8 +35,8 @@ async function main() {
     const cuenca = $(columns[0]).text().trim();
     const cuenca_link = $(columns[0]).find("a").attr("href");
 
-    const cuenca_response = await axios.get(`https://www.embalses.net/${cuenca_link}`);
-    const cuenca_soup = cheerio.load(cuenca_response.data);
+    const cuenca_response = await get(`https://www.embalses.net/${cuenca_link}`);
+    const cuenca_soup = load(cuenca_response.data);
 
     const cuenca_table = cuenca_soup("table.Tabla");
     const cuenca_rows = cuenca_table.find("tr.ResultadoCampo");
@@ -51,8 +51,8 @@ async function main() {
 
         console.log(`Embalse: ${embalse} | Cuenca: ${cuenca}`);
 
-        const embalse_response = await axios.get(`https://www.embalses.net/${embalse_link}`);
-        const embalse_soup = cheerio.load(embalse_response.data);
+        const embalse_response = await get(`https://www.embalses.net/${embalse_link}`);
+        const embalse_soup = load(embalse_response.data);
 
         const divs = embalse_soup("div.SeccionCentral_Caja");
 
@@ -65,12 +65,12 @@ async function main() {
 
           const fila_seccion_divs = second_div.find("div.FilaSeccion");
 
-          log4js.configure({
+          configure({
             appenders: { file: { type: "file", filename: "app.log" } },
             categories: { default: { appenders: ["file"], level: "info" } },
           });
 
-          const logger = log4js.getLogger();
+          const logger = getLogger();
 
           for (let k = 0; k < fila_seccion_divs.length; k++) {
             const fila_seccion_div = $(fila_seccion_divs[k]);
@@ -93,7 +93,8 @@ async function main() {
                 );
               } else if (k === 1) {
                 var variacion_ultima_semana = fila_datos[0];
-                var variacion_ultima_semana_por = fila_datos.length > 1 ? fila_datos[1] : null;
+                var variacion_ultima_semana_por =
+                  fila_datos.length > 1 ? fila_datos[1] : null;
                 logger.info(
                   `Iteración ${k}: variacion_ultima_semana = ${variacion_ultima_semana}, variacion_ultima_semana_por = ${variacion_ultima_semana_por}`
                 );
@@ -102,13 +103,15 @@ async function main() {
                 logger.info(`Iteración ${k}: capacidad_total = ${capacidad_total}`);
               } else if (k === 3) {
                 var misma_semana_ultimo_año = fila_datos[0];
-                var misma_semana_ultimo_año_por = fila_datos.length > 1 ? fila_datos[1] : null;
+                var misma_semana_ultimo_año_por =
+                  fila_datos.length > 1 ? fila_datos[1] : null;
                 logger.info(
                   `Iteración ${k}: misma_semana_ultimo_año = ${misma_semana_ultimo_año}, misma_semana_ultimo_año_por = ${misma_semana_ultimo_año_por}`
                 );
               } else if (k === 4) {
                 var misma_semana_10años = fila_datos[0];
-                var misma_semana_10años_por = fila_datos.length > 1 ? fila_datos[1] : null;
+                var misma_semana_10años_por =
+                  fila_datos.length > 1 ? fila_datos[1] : null;
                 logger.info(
                   `Iteración ${k}: misma_semana_10años = ${misma_semana_10años}, misma_semana_10años_por = ${misma_semana_10años_por}`
                 );
