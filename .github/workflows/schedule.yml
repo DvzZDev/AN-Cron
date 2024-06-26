@@ -2,7 +2,7 @@ name: Data AcuaEs
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "0 */4 * * *"
   push:
 jobs:
   run-scripts:
@@ -24,4 +24,7 @@ jobs:
         run: node pluvis.js
 
       - name: Catch Data Embalses
+        run: node datosEmbalses.js
+
+      - name: Catch Data Cuencas
         run: node datosEmbalses.js
