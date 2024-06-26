@@ -1,7 +1,6 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
-const mysql = require("mysql2/promise");
-
+import axios from "axios";
+import cheerio from "cheerio";
+import mysql from "mysql2/promise";
 async function main() {
   const conn = await mysql.createConnection({
     host: "gateway01.eu-central-1.prod.aws.tidbcloud.com",
