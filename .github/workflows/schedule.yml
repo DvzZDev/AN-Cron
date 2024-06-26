@@ -2,10 +2,10 @@ name: Data AcuaEs
 
 on:
   schedule:
-    - cron: "0 */2 * * *" 
-
+    - cron: "0 */2 * * *"
+  push:
 jobs:
-  run-script:
+  run-scripts:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,13 +18,10 @@ jobs:
           node-version: "20"
 
       - name: Install dependencies
-        run: |
-          npm install
+        run: npm install
 
       - name: Catch Data Pluviometros
-
         run: node pluvis.js
 
       - name: Catch Data Embalses
-
         run: node datosEmbalses.js
