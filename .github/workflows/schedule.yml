@@ -23,8 +23,10 @@ jobs:
       - name: Catch Data Pluviometros
         run: node pluvis.js
 
+      - name: Catch Data Cuencas
+        run: node cuencas.js
+
       - name: Catch Data Embalses
         run: node datosEmbalses.js
 
-      - name: Catch Data Cuencas
-        run: node datosEmbalses.js
+      
