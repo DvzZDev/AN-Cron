@@ -16,4 +16,4 @@ jobs:
         with:
           node-version: "20"
       - name: Run script
-        run: node pluvis.js && node datosEmbalses.js
+        run: node pluvis.js 
