@@ -25,6 +25,3 @@ jobs:
 
       - name: Catch Data Cuencas
         run: node cuencas.js
-
-      - name: Catch Data Embalses
-        run: node datosEmbalses.js
