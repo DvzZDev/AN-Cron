@@ -45,7 +45,7 @@ async function main() {
       const cuenca_columns = cuenca_row.find("td");
       if (cuenca_columns.length >= 3) {
         let embalse = $(cuenca_columns[0]).text().trim();
-        embalse = embalse.replace("Ã±", "ñ").replace("[+]", "");
+        embalse = embalse.replace("Ã±", "ñ").replace(" [+]", "").trim();
         const embalse_link = $(cuenca_columns[0]).find("a").attr("href");
 
         console.log(`Embalse: ${embalse} | Cuenca: ${cuenca}`);
