@@ -116,7 +116,7 @@ axios
                 const { data, error } = await supabase.from("datos_embalses").upsert([
                   {
                     fecha_modificacion,
-                    nombre_embalse: embalse,
+                    nombre_embalse: embalse.toLowerCase(),
                     nombre_cuenca: cuenca,
                     agua_embalsada,
                     agua_embalsadapor: agua_embalsada_por,
