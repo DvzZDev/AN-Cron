@@ -10,6 +10,11 @@ export default [
         ...globals.node,
       },
     },
+    env: {
+      node: true,
+      es2021: true,
+    },
+    rules: {},
   },
   pluginJs.configs.recommended,
 ]
