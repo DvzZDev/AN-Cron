@@ -1,11 +1,17 @@
-name: Data Cuencas & Data España
+name: Data Cuencas, Data España & Playwright Test
 
 on:
   schedule:
     - cron: "0 */23 * * *"
   push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  run-scripts:
+  data-and-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,3 +31,12 @@ jobs:
 
       - name: Catch Data Cuencas
         run: node cuencas.js
+
+      - name: Install Playwright dependencies
+        run: npx playwright install-deps
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      - name: Run Playwright script
+        run: node cota.js
