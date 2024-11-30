@@ -80,56 +80,51 @@ async function safeFetch(url, options = {}, retries = 3) {
 
 // Extracción de datos de embalse
 function extractReservoirData($) {
-  const divs = $("div.SeccionCentral_Caja")
-  if (divs.length < 2) return null
+  const bodyCenter = $("div.index_bodycenter")
 
-  const second_div = $(divs[1])
-  const fila_seccion_divs = second_div.find("div.FilaSeccion")
+  if (bodyCenter.length === 0) return null
 
+  const fila_seccion_divs = bodyCenter.find("div.FilaSeccion")
+
+  // Inicializar todos los campos con 0
   const data = {
-    agua_embalsada: null,
-    agua_embalsadapor: null,
-    variacion_ultima_semana: null,
-    variacion_ultima_semanapor: null,
-    capacidad_total: null,
-    misma_semana_ultimo_año: null,
-    misma_semana_ultimo_añopor: null,
-    misma_semana_10años: null,
-    misma_semana_10añospor: null,
+    agua_embalsada: "0",
+    agua_embalsadapor: "0",
+    variacion_ultima_semana: "0",
+    variacion_ultima_semanapor: "0",
+    capacidad_total: "0",
+    misma_semana_ultimo_año: "0",
+    misma_semana_ultimo_añopor: "0",
+    misma_semana_10años: "0",
+    misma_semana_10añospor: "0",
   }
 
-  fila_seccion_divs.each((k, fila_seccion_div) => {
-    const fila_datos = []
-    const resultado_divs = $(fila_seccion_div).find("div.Resultado")
+  fila_seccion_divs.each((_, fila_seccion_div) => {
+    const label = $(fila_seccion_div).find("div.Campo").text().trim()
+    const resultados = []
 
-    resultado_divs.each((_, resultado_div) => {
-      const resultado = $(resultado_div).text().trim()
-      fila_datos.push(resultado)
-    })
+    $(fila_seccion_div)
+      .find("div.Resultado")
+      .each((_, resultado_div) => {
+        const resultado = $(resultado_div).text().trim() || "0"
+        resultados.push(resultado)
+      })
 
-    const extractionMap = {
-      0: () => {
-        data.agua_embalsada = fila_datos[0]?.replace(".", "")
-        data.agua_embalsadapor = fila_datos[1] || null
-      },
-      1: () => {
-        data.variacion_ultima_semana = fila_datos[0]
-        data.variacion_ultima_semanapor = fila_datos[1] || null
-      },
-      2: () => {
-        data.capacidad_total = fila_datos[0]?.replace(".", "")
-      },
-      3: () => {
-        data.misma_semana_ultimo_año = fila_datos[0]
-        data.misma_semana_ultimo_añopor = fila_datos[1] || null
-      },
-      4: () => {
-        data.misma_semana_10años = fila_datos[0]
-        data.misma_semana_10añospor = fila_datos[1] || null
-      },
+    if (label.includes("Agua embalsada")) {
+      data.agua_embalsada = resultados[0].replace(/\./g, "").replace(",", ".")
+      data.agua_embalsadapor = resultados[1].replace("%", "").replace(",", ".")
+    } else if (label.includes("Variación semana Anterior")) {
+      data.variacion_ultima_semana = resultados[0].replace(/\./g, "").replace(",", ".")
+      data.variacion_ultima_semanapor = resultados[1].replace("%", "").replace(",", ".")
+    } else if (label.includes("Capacidad")) {
+      data.capacidad_total = resultados[0].replace(/\./g, "").replace(",", ".")
+    } else if (label.match(/Misma Semana \(\d{4}\)/)) {
+      data.misma_semana_ultimo_año = resultados[0].replace(/\./g, "").replace(",", ".")
+      data.misma_semana_ultimo_añopor = resultados[1].replace("%", "").replace(",", ".")
+    } else if (label.includes("Misma Semana (Med. 10 Años)")) {
+      data.misma_semana_10años = resultados[0].replace(/\./g, "").replace(",", ".")
+      data.misma_semana_10añospor = resultados[1].replace("%", "").replace(",", ".")
     }
-
-    extractionMap[k]?.()
   })
 
   return data
@@ -231,7 +226,6 @@ async function scrapeReservoirs() {
                         nombre_cuenca: cuenca,
                         ...reservoirData,
                       }
-                      Logger.log(`Insertando datos del embalse: ${embalse}`)
 
                       allReservoirData.push(dataToInsert)
                       Logger.stats.processedReservoirs++
