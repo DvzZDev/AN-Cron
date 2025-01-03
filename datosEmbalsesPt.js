@@ -41,8 +41,8 @@ export async function Main() {
       .replace(/```[a-z]*\n?|\n```/g, "")
       .trim()
     const jsonResponse = JSON.parse(responseText)
-    // await fs.writeFile("datosEmbalsesPt.json", JSON.stringify(jsonResponse, null, 2))
-    // console.log("JSON response saved to datosEmbalsesPt.json")
+    await fs.writeFile("datosEmbalsesPt.json", JSON.stringify(jsonResponse, null, 2))
+    console.log("JSON response saved to datosEmbalsesPt.json")
     try {
       for (const item of jsonResponse) {
         await InsertData(item)

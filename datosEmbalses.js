@@ -158,6 +158,7 @@ fetchWithTimeout(url)
                     misma_semana_ultimo_añopor: misma_semana_ultimo_año_por,
                     misma_semana_10años,
                     misma_semana_10añospor: misma_semana_10años_por,
+                    pais: "España",
                   },
                 ])
 

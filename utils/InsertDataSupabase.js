@@ -25,6 +25,7 @@ export default async function InsertInDb(item) {
           (item.Capacidad_Total * parseFloat(item.VariacionPor.replace("%", ""))) /
           100
         ).toFixed(0),
+        pais: "Portugal",
         capacidad_total: item.Capacidad_Total.toFixed(0),
       },
     ])
