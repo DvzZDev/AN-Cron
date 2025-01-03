@@ -1,6 +1,7 @@
 {
   "type": "module",
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "@playwright/test": "^1.48.2",
     "@supabase/supabase-js": "^2.45.4",
     "axios": "^1.7.2",
@@ -11,6 +12,7 @@
     "fs": "^0.0.1-security",
     "p-limit": "^6.1.0",
     "path": "^0.12.7",
+    "pdf-parse": "^1.1.1",
     "progress": "^2.0.3",
     "puppeteer": "^22.11.1",
     "unidecode": "^1.1.0"

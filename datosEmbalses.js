@@ -12,10 +12,6 @@ const supabase = createClient(supabaseUrl, supabaseKey)
 
 // URL de la página web que queremos scrappear
 const url = "https://www.embalses.net/cuencas.php"
-
-// Función para agregar un retraso
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
 // Función para realizar fetch con timeout
 const fetchWithTimeout = async (resource, options = {}) => {
   const { timeout = 8000 } = options

@@ -1,8 +1,8 @@
-name: Data Embalses España
+name: Data Embalses Portugal
 
 on:
   schedule:
-    - cron: "59 23 * * *"
+    - cron: "59 23 * * 1"
   push:
 
 jobs:
@@ -21,5 +21,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Catch Data Embalses
-        run: node datosEmbalses.js
+      - name: Catch Data Embalses Portugal
+        run: node datosEmbalsesPt.js
