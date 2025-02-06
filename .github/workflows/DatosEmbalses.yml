@@ -6,8 +6,8 @@ on:
   push:
 
 jobs:
-  run-scripts:
-    runs-on: ubuntu-latest
+   run-scripts:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository

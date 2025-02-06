@@ -11,8 +11,8 @@ on:
       - main
 
 jobs:
-  data-and-tests:
-    runs-on: ubuntu-latest
+  run-scripts:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
