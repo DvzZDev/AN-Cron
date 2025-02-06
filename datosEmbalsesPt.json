@@ -1,0 +1,740 @@
+[
+  {
+    "Cuenca": "LIMA",
+    "Embalse": "Alto Lindoso",
+    "Uso": "Energia e lazer",
+    "Capacidad_Total": 379,
+    "Volumen_Llenado": 240,
+    "VolumenPor": "63%",
+    "VariacionPor": "12%"
+  },
+  {
+    "Cuenca": "LIMA",
+    "Embalse": "Touvedo",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 15.5,
+    "Volumen_Llenado": 13.9,
+    "VolumenPor": "90%",
+    "VariacionPor": "11%"
+  },
+  {
+    "Cuenca": "CÁVADO",
+    "Embalse": "Alto Rabagão",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 568.7,
+    "Volumen_Llenado": 367,
+    "VolumenPor": "65%",
+    "VariacionPor": "2%"
+  },
+  {
+    "Cuenca": "CÁVADO",
+    "Embalse": "Caniçada",
+    "Uso": "Energia e lazer",
+    "Capacidad_Total": 159.3,
+    "Volumen_Llenado": 151,
+    "VolumenPor": "95%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "CÁVADO",
+    "Embalse": "Paradela",
+    "Uso": "Energia",
+    "Capacidad_Total": 164.4,
+    "Volumen_Llenado": 116,
+    "VolumenPor": "71%",
+    "VariacionPor": "10%"
+  },
+  {
+    "Cuenca": "CÁVADO",
+    "Embalse": "Salamonde",
+    "Uso": "Energia",
+    "Capacidad_Total": 65,
+    "Volumen_Llenado": 61.5,
+    "VolumenPor": "95%",
+    "VariacionPor": "18%"
+  },
+  {
+    "Cuenca": "CÁVADO",
+    "Embalse": "Venda Nova",
+    "Uso": "Energia",
+    "Capacidad_Total": 94.5,
+    "Volumen_Llenado": 90.8,
+    "VolumenPor": "96%",
+    "VariacionPor": "8%"
+  },
+  {
+    "Cuenca": "CÁVADO",
+    "Embalse": "Vilarinho das Furnas",
+    "Uso": "Energia",
+    "Capacidad_Total": 117.69,
+    "Volumen_Llenado": 106,
+    "VolumenPor": "90%",
+    "VariacionPor": "12%"
+  },
+  {
+    "Cuenca": "AVE",
+    "Embalse": "Guilhofrei",
+    "Uso": "Energia e lazer",
+    "Capacidad_Total": 21.2,
+    "Volumen_Llenado": 18.962,
+    "VolumenPor": "89%",
+    "VariacionPor": "32%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Alijó",
+    "Uso": "Abastecimento",
+    "Capacidad_Total": 1.74,
+    "Volumen_Llenado": 1.144,
+    "VolumenPor": "66%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Azibo",
+    "Uso": "Abastecimento, rega e lazer",
+    "Capacidad_Total": 54.47,
+    "Volumen_Llenado": 45.632,
+    "VolumenPor": "84%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Baixo Sabor",
+    "Uso": "Energia",
+    "Capacidad_Total": 1095,
+    "Volumen_Llenado": 954,
+    "VolumenPor": "87%",
+    "VariacionPor": "2%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Bemposta",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 128.8,
+    "Volumen_Llenado": 117,
+    "VolumenPor": "91%",
+    "VariacionPor": "-4%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Carrapatelo",
+    "Uso": "Abastecimento, energia e lazer",
+    "Capacidad_Total": 150.2,
+    "Volumen_Llenado": 132,
+    "VolumenPor": "88%",
+    "VariacionPor": "-1%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Crestuma-Lever",
+    "Uso": "Abastecimento, energia e lazer",
+    "Capacidad_Total": 110,
+    "Volumen_Llenado": 100,
+    "VolumenPor": "91%",
+    "VariacionPor": "-2%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Foz Tua",
+    "Uso": "Energia",
+    "Capacidad_Total": 106.1,
+    "Volumen_Llenado": 101.547,
+    "VolumenPor": "96%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Miranda",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 28,
+    "Volumen_Llenado": 23.5,
+    "VolumenPor": "84%",
+    "VariacionPor": "-8%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Picote",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 62.7,
+    "Volumen_Llenado": 57.6,
+    "VolumenPor": "92%",
+    "VariacionPor": "-5%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Pocinho",
+    "Uso": "Abastecimento, energia e lazer",
+    "Capacidad_Total": 82.9,
+    "Volumen_Llenado": 79.2,
+    "VolumenPor": "96%",
+    "VariacionPor": "7%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Régua",
+    "Uso": "Abastecimento, energia e lazer",
+    "Capacidad_Total": 95,
+    "Volumen_Llenado": 89,
+    "VolumenPor": "94%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Serra Serrada",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 1.68,
+    "Volumen_Llenado": 1.68,
+    "VolumenPor": "100%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Torrão",
+    "Uso": "Abastecimento, energia e lazer",
+    "Capacidad_Total": 123.9,
+    "Volumen_Llenado": 94.5,
+    "VolumenPor": "76%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Valeira",
+    "Uso": "Energia",
+    "Capacidad_Total": 98.5,
+    "Volumen_Llenado": 91.8,
+    "VolumenPor": "93%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Varosa",
+    "Uso": "Energia",
+    "Capacidad_Total": 12.943,
+    "Volumen_Llenado": 9.717,
+    "VolumenPor": "75%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "DOURO",
+    "Embalse": "Vilar-Tabuaço",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 99.75,
+    "Volumen_Llenado": 61.9,
+    "VolumenPor": "62%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "VOUGA",
+    "Embalse": "Ribeiradio",
+    "Uso": "Energia",
+    "Capacidad_Total": 136.4,
+    "Volumen_Llenado": 124,
+    "VolumenPor": "91%",
+    "VariacionPor": "4%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Aguieira",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 423,
+    "Volumen_Llenado": 342,
+    "VolumenPor": "81%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Caldeirão",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 5.5,
+    "Volumen_Llenado": 4.798,
+    "VolumenPor": "87%",
+    "VariacionPor": "-6%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Fagilde",
+    "Uso": "Abastecimento",
+    "Capacidad_Total": 3.841,
+    "Volumen_Llenado": 3.489,
+    "VolumenPor": "91%",
+    "VariacionPor": "-1%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Fronhas",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 62.1,
+    "Volumen_Llenado": 29.7,
+    "VolumenPor": "48%",
+    "VariacionPor": "7%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Lagoa Comprida",
+    "Uso": "Energia",
+    "Capacidad_Total": 13.88,
+    "Volumen_Llenado": 13.434,
+    "VolumenPor": "97%",
+    "VariacionPor": "4%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Lagoacho",
+    "Uso": "Energia",
+    "Capacidad_Total": 1.525,
+    "Volumen_Llenado": 0.571,
+    "VolumenPor": "37%",
+    "VariacionPor": "-6%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Raiva",
+    "Uso": "Energia",
+    "Capacidad_Total": 24.4,
+    "Volumen_Llenado": 18.6,
+    "VolumenPor": "76%",
+    "VariacionPor": "19%"
+  },
+  {
+    "Cuenca": "MONDEGO",
+    "Embalse": "Vale do Rossim",
+    "Uso": "Energia",
+    "Capacidad_Total": 3.5,
+    "Volumen_Llenado": 1.438,
+    "VolumenPor": "41%",
+    "VariacionPor": "-7%"
+  },
+  {
+    "Cuenca": "R. DO OESTE",
+    "Embalse": "São Domingos",
+    "Uso": "Abastecimento",
+    "Capacidad_Total": 7.9,
+    "Volumen_Llenado": 5.455,
+    "VolumenPor": "69%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Apartadura",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 7.465,
+    "Volumen_Llenado": 6.348,
+    "VolumenPor": "85%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Belver",
+    "Uso": "Energia",
+    "Capacidad_Total": 20.57,
+    "Volumen_Llenado": 18.582,
+    "VolumenPor": "90%",
+    "VariacionPor": "4%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Bouçã",
+    "Uso": "Energia",
+    "Capacidad_Total": 48.4,
+    "Volumen_Llenado": 47.6,
+    "VolumenPor": "98%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Cabril",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 720,
+    "Volumen_Llenado": 434,
+    "VolumenPor": "60%",
+    "VariacionPor": "3%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Capinha",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 0.5,
+    "Volumen_Llenado": null,
+    "VolumenPor": null,
+    "VariacionPor": null
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Castelo de Bode",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 1095,
+    "Volumen_Llenado": 783,
+    "VolumenPor": "72%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Cova do Viriato",
+    "Uso": "Abastecimento",
+    "Capacidad_Total": 1.5,
+    "Volumen_Llenado": 1.5,
+    "VolumenPor": "100%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Divôr",
+    "Uso": "Rega",
+    "Capacidad_Total": 11.9,
+    "Volumen_Llenado": 5.901,
+    "VolumenPor": "50%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Fratel",
+    "Uso": "Energia",
+    "Capacidad_Total": 93,
+    "Volumen_Llenado": 81.8,
+    "VolumenPor": "88%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Idanha",
+    "Uso": "Energia e rega",
+    "Capacidad_Total": 78.1,
+    "Volumen_Llenado": 46.24,
+    "VolumenPor": "59%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Magos",
+    "Uso": "Rega",
+    "Capacidad_Total": 3.384,
+    "Volumen_Llenado": 2.379,
+    "VolumenPor": "70%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Maranhão",
+    "Uso": "Energia e rega",
+    "Capacidad_Total": 205.4,
+    "Volumen_Llenado": 151.314,
+    "VolumenPor": "74%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Meimoa",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 40.9,
+    "Volumen_Llenado": 0.00713,
+    "VolumenPor": null,
+    "VariacionPor": null
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Minutos",
+    "Uso": "Rega",
+    "Capacidad_Total": 52.1,
+    "Volumen_Llenado": 16.74,
+    "VolumenPor": "32%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Montargil",
+    "Uso": "Energia e rega",
+    "Capacidad_Total": 164.3,
+    "Volumen_Llenado": 122.515,
+    "VolumenPor": "75%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Póvoa",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 22,
+    "Volumen_Llenado": 11.9,
+    "VolumenPor": "54%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Pracana",
+    "Uso": "Energia",
+    "Capacidad_Total": 111.9,
+    "Volumen_Llenado": 71.8,
+    "VolumenPor": "64%",
+    "VariacionPor": "8%"
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Santa Águeda",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 37.2,
+    "Volumen_Llenado": null,
+    "VolumenPor": null,
+    "VariacionPor": null
+  },
+  {
+    "Cuenca": "TEJO",
+    "Embalse": "Santa Luzia",
+    "Uso": "Abastecimento e energia",
+    "Capacidad_Total": 53.7,
+    "Volumen_Llenado": 48.685,
+    "VolumenPor": "91%",
+    "VariacionPor": "3%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Alvito",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 132.5,
+    "Volumen_Llenado": 93.087,
+    "VolumenPor": "70%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Campilhas",
+    "Uso": "Rega",
+    "Capacidad_Total": 27.15,
+    "Volumen_Llenado": 5.661,
+    "VolumenPor": "21%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Fonte Serne",
+    "Uso": "Rega",
+    "Capacidad_Total": 5.15,
+    "Volumen_Llenado": 3.482,
+    "VolumenPor": "68%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Monte da Rocha",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 104.5,
+    "Volumen_Llenado": 11.912,
+    "VolumenPor": "11%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Monte Gato",
+    "Uso": "Rega",
+    "Capacidad_Total": 0.653,
+    "Volumen_Llenado": 0.363,
+    "VolumenPor": "56%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Monte Migueis",
+    "Uso": "Rega",
+    "Capacidad_Total": 0.939,
+    "Volumen_Llenado": 0.613,
+    "VolumenPor": "65%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Odivelas",
+    "Uso": "Energia e rega",
+    "Capacidad_Total": 96,
+    "Volumen_Llenado": 57.2,
+    "VolumenPor": "60%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Pego do Altar",
+    "Uso": "Energia e rega",
+    "Capacidad_Total": 94,
+    "Volumen_Llenado": 52.696,
+    "VolumenPor": "56%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Roxo",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 96.311,
+    "Volumen_Llenado": 42.663,
+    "VolumenPor": "44%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "SADO",
+    "Embalse": "Vale do Gaio",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 63,
+    "Volumen_Llenado": 34.442,
+    "VolumenPor": "55%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "R. C. ALENTEJO",
+    "Embalse": "Morgavel",
+    "Uso": "Abastecimento e industrial",
+    "Capacidad_Total": 32.5,
+    "Volumen_Llenado": 20.87,
+    "VolumenPor": "64%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "MIRA",
+    "Embalse": "Corte Brique",
+    "Uso": "Rega",
+    "Capacidad_Total": 1.636,
+    "Volumen_Llenado": 1.125,
+    "VolumenPor": "69%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "MIRA",
+    "Embalse": "Santa Clara",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 485,
+    "Volumen_Llenado": 175.924,
+    "VolumenPor": "36%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Abrilongo",
+    "Uso": "Rega",
+    "Capacidad_Total": 19.9,
+    "Volumen_Llenado": 14.678,
+    "VolumenPor": "74%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Alqueva",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 4150,
+    "Volumen_Llenado": 3263,
+    "VolumenPor": "79%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Beliche",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 48,
+    "Volumen_Llenado": 18.363,
+    "VolumenPor": "38%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Caia",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 203,
+    "Volumen_Llenado": 139.57,
+    "VolumenPor": "69%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Enxoé",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 12.5,
+    "Volumen_Llenado": 8.158,
+    "VolumenPor": "65%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Lucefecit",
+    "Uso": "Rega",
+    "Capacidad_Total": 10.225,
+    "Volumen_Llenado": 3.951,
+    "VolumenPor": "39%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Monte Novo",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 15.28,
+    "Volumen_Llenado": 10.693,
+    "VolumenPor": "70%",
+    "VariacionPor": "1%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Odeleite",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 130,
+    "Volumen_Llenado": 59.404,
+    "VolumenPor": "46%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "GUADIANA",
+    "Embalse": "Vigia",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 16.725,
+    "Volumen_Llenado": 3.64,
+    "VolumenPor": "22%",
+    "VariacionPor": "-9%"
+  },
+  {
+    "Cuenca": "ARADE",
+    "Embalse": "Arade",
+    "Uso": "Energia e rega",
+    "Capacidad_Total": 28.38,
+    "Volumen_Llenado": 4.64,
+    "VolumenPor": "16%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "ARADE",
+    "Embalse": "Funcho",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 47.72,
+    "Volumen_Llenado": 16.19,
+    "VolumenPor": "34%",
+    "VariacionPor": "-1%"
+  },
+  {
+    "Cuenca": "ARADE",
+    "Embalse": "Odelouca",
+    "Uso": "Abastecimento",
+    "Capacidad_Total": 157,
+    "Volumen_Llenado": 47.645,
+    "VolumenPor": "30%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "R. BARLAVENTO",
+    "Embalse": "Bravura",
+    "Uso": "Abastecimento, energia e rega",
+    "Capacidad_Total": 34.825,
+    "Volumen_Llenado": 4.419,
+    "VolumenPor": "13%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "R. SOTAVENTO",
+    "Embalse": "Beliche",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 48,
+    "Volumen_Llenado": 18.363,
+    "VolumenPor": "38%",
+    "VariacionPor": "0%"
+  },
+  {
+    "Cuenca": "R. SOTAVENTO",
+    "Embalse": "Odeleite",
+    "Uso": "Abastecimento e rega",
+    "Capacidad_Total": 130,
+    "Volumen_Llenado": 59.404,
+    "VolumenPor": "46%",
+    "VariacionPor": "0%"
+  }
+]
