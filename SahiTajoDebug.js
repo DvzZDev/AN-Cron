@@ -52,11 +52,7 @@ async function scrapTajo() {
   console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-blink-features=AutomationControlled", // Add this line
-    ],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
 
   console.log("📱 Setting up browser context...")
@@ -114,7 +110,7 @@ async function scrapTajo() {
         console.log("📊 Processing reservoirs...")
         for (const region of regions) {
           await region.click({ force: true })
-          await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
+          await page.waitForTimeout(getRandomDelay(1000, 2000))
 
           const firstExpandableSelector =
             "#tabbar-datos-tiempo-real > div.tabbar__content.ons-tabbar__content.ons-swiper.tabbar--top__content > div.ons-swiper-target.active > ons-page:nth-child(3) > div.page__content > ons-list > ons-list-item.list-item.list-item--expandable.list-item--expanded > div.expandable-content.list-item__expandable-content"
@@ -128,7 +124,7 @@ async function scrapTajo() {
           )
           for (const item of expandableItems) {
             await item.click({ force: true })
-            await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
+            await page.waitForTimeout(getRandomDelay(1000, 2000))
 
             const nestedExpandableSelector =
               firstExpandableSelector +
@@ -157,7 +153,7 @@ async function scrapTajo() {
 
               await embalse.scrollIntoViewIfNeeded()
               await embalse.click({ force: true })
-              await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
+              await page.waitForTimeout(getRandomDelay(1000, 2000))
 
               try {
                 const [cotaValue, volumenValue, porcentajeValue] = await page.evaluate(
@@ -226,7 +222,7 @@ async function scrapTajo() {
                 timeout: 15000,
               })
               await page.click(closeButtonSelector, { force: true })
-              await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
+              await page.waitForTimeout(getRandomDelay(1000, 2000))
             }
           }
         }

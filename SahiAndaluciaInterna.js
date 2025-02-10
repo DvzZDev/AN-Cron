@@ -147,8 +147,6 @@ async function processMarker(context, markerIndex, url) {
       throw new Error("Failed to extract reservoir data")
     }
 
-    console.log(`Extracted data marker ${markerIndex + 1}:`, data)
-
     // Close modal
     await page.evaluate(() => {
       const closeBtn = document.querySelector(".modal-header .close")
@@ -186,7 +184,6 @@ async function scrapAndaluciaInterna() {
       timeout: 30000,
     })
     const markers = await page.$$(".leaflet-marker-icon.leaflet-interactive")
-    console.log(`Found ${markers.length} markers`)
     await page.close()
 
     // Batch size for concurrency
