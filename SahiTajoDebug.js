@@ -34,18 +34,35 @@ function encontrarMejorCoincidencia(nombreScraped, nombresCorrectos) {
   return { nombre: mejorCoincidencia, puntaje: mejorPuntaje }
 }
 
+const userAgents = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0",
+]
+
+function getRandomUserAgent() {
+  return userAgents[Math.floor(Math.random() * userAgents.length)]
+}
+
+function getRandomDelay(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 async function scrapTajo() {
   console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-blink-features=AutomationControlled", // Add this line
+    ],
   })
 
   console.log("📱 Setting up browser context...")
   const context = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
-    userAgent:
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    userAgent: getRandomUserAgent(), // Use a random user agent
   })
 
   const page = await context.newPage()
@@ -74,7 +91,7 @@ async function scrapTajo() {
         const datosTiempoRealButton = await page.$(datosTiempoRealButtonSelector)
         if (datosTiempoRealButton) {
           await datosTiempoRealButton.click({ force: true })
-          await page.waitForTimeout(1000)
+          await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
           await page.waitForLoadState("networkidle")
         }
 
@@ -97,7 +114,7 @@ async function scrapTajo() {
         console.log("📊 Processing reservoirs...")
         for (const region of regions) {
           await region.click({ force: true })
-          await page.waitForTimeout(1000)
+          await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
 
           const firstExpandableSelector =
             "#tabbar-datos-tiempo-real > div.tabbar__content.ons-tabbar__content.ons-swiper.tabbar--top__content > div.ons-swiper-target.active > ons-page:nth-child(3) > div.page__content > ons-list > ons-list-item.list-item.list-item--expandable.list-item--expanded > div.expandable-content.list-item__expandable-content"
@@ -111,7 +128,7 @@ async function scrapTajo() {
           )
           for (const item of expandableItems) {
             await item.click({ force: true })
-            await page.waitForTimeout(1000)
+            await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
 
             const nestedExpandableSelector =
               firstExpandableSelector +
@@ -140,7 +157,7 @@ async function scrapTajo() {
 
               await embalse.scrollIntoViewIfNeeded()
               await embalse.click({ force: true })
-              await page.waitForTimeout(1000)
+              await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
 
               try {
                 const [cotaValue, volumenValue, porcentajeValue] = await page.evaluate(
@@ -209,7 +226,7 @@ async function scrapTajo() {
                 timeout: 15000,
               })
               await page.click(closeButtonSelector, { force: true })
-              await page.waitForTimeout(1000)
+              await page.waitForTimeout(getRandomDelay(1000, 2000)) // Add random delay
             }
           }
         }
