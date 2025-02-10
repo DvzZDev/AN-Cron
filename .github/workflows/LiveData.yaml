@@ -1,75 +1,45 @@
 name: AcuaNet Cron Jobs
-
 on:
   schedule:
     - cron: "0 2 */2 * *"
   push:
-
 jobs:
   run-scripts:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
         with:
           version: latest
-
       - name: Get pnpm store directory
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - name: Cache pnpm dependencies
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: ${{ env.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
-
-      - name: Catch SahiTajo
-        run: pnpm node SahiTajo.js
-
-      - name: Catch Sahi Guadiana
-        run: pnpm node SahiGuadiana.js
-
-      - name: Catch Sahi Ebro
-        run: pnpm node SahiEbro.js
-
-      - name: Catch Sahi Guadalquivir
-        run: pnpm node SahiGudalquivir.js
-
-      - name: Catch Sahi Duero
-        run: pnpm node SahiDuero.js
-
-      - name: Catch Sahi Segura
-        run: pnpm node SahiSegura.js
-
-      - name: Catch Sahi AndaluciaInterna
-        run: pnpm node SahiAndaluciaInterna.js
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps
+      - run: pnpm node SahiTajo.js
+      - run: pnpm node SahiGuadiana.js
+      - run: pnpm node SahiEbro.js
+      - run: pnpm node SahiGudalquivir.js
+      - run: pnpm node SahiDuero.js
+      - run: pnpm node SahiSegura.js
+      - run: pnpm node SahiAndaluciaInterna.js
