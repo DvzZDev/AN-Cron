@@ -3,7 +3,7 @@ name: Data Embalses 2025
 on:
   schedule:
     - cron: "0 2 */2 * *"
-  push:
+  # push:
 
 jobs:
   run-scripts:
@@ -18,8 +18,34 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Catch Data 2025
-        run: node Embalses2025.js
+        run: pnpm node Embalses2025.js
+
+      - name: Catch SahiTajo
+        run: pnpm node SahiTajo.js
+
+      - name: Catch Sahi Guadiana
+        run: pnpm node SahiGuadiana.js
+
+      - name: Catch Sahi Ebro
+        run: pnpm node SahiEbro.js
+
+      - name: Catch Sahi Guadalquivir
+        run: pnpm node SahiGudalquivir.js
+
+      - name: Catch Sahi Duero
+        run: pnpm node SahiDuero.js
+
+      - name: Catch Sahi Segura
+        run: pnpm node SahiSegura.js
+
+      - name: Catch Sahi AndaluciaIntera
+        run: pnpm node SahiAndaluciaInterna.js

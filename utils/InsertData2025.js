@@ -21,9 +21,10 @@ export default async function insertData(data) {
     chunks.map(async (chunk, index) => {
       try {
         const formattedData = chunk.map((d) => ({
+          id: `${d.EMBALSE_NOMBRE}_${new Date(d.FECHA).toISOString()}`,
           embalse: d.EMBALSE_NOMBRE,
           cuenca: d.AMBITO_NOMBRE,
-          fecha: new Date(d.FECHA),
+          fecha: new Date(d.FECHA).toISOString(),
           capacidad_total: parseFloat(d.AGUA_TOTAL.replace(",", ".")),
           volumen_actual: parseFloat(d.AGUA_ACTUAL.replace(",", ".")),
           porcentaje: parseFloat(d.PORCENTAJE),
@@ -31,7 +32,10 @@ export default async function insertData(data) {
 
         const { data: insertedData, error } = await supabase
           .from("embalses2025")
-          .upsert(formattedData)
+          .upsert(formattedData, {
+            onConflict: "id",
+            ignoreDuplicates: true,
+          })
 
         if (error) {
           errorCount += chunk.length
