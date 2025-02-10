@@ -8,6 +8,9 @@ on:
 jobs:
   run-scripts:
     runs-on: windows-latest
+    env:
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -47,5 +50,5 @@ jobs:
       - name: Catch Sahi Segura
         run: pnpm node SahiSegura.js
 
-      - name: Catch Sahi AndaluciaIntera
+      - name: Catch Sahi AndaluciaInterna
         run: pnpm node SahiAndaluciaInterna.js
