@@ -39,7 +39,7 @@ jobs:
       - run: pnpm node SahiTajoDebug.js
       - run: pnpm node SahiGuadiana.js
       - run: pnpm node SahiEbro.js
-      - run: pnpm node SahiGudalquivir.js
+      - run: pnpm node SahiGuadalquivir.js
       - run: pnpm node SahiDuero.js
       - run: pnpm node SahiSegura.js
       - run: pnpm node SahiAndaluciaInterna.js
