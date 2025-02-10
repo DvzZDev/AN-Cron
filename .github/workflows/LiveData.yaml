@@ -1,8 +1,8 @@
 name: AcuaNet Cron Jobs
 on:
   schedule:
-    - cron: "0 2 */2 * *"
-  push:
+    - cron: "0 6,8,10,12,14,16,18,20,22,0 * * *"
+  # push:
 jobs:
   run-scripts:
     runs-on: ubuntu-latest
