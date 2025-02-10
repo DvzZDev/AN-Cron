@@ -35,11 +35,13 @@ function encontrarMejorCoincidencia(nombreScraped, nombresCorrectos) {
 }
 
 async function scrapTajo() {
+  console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
 
+  console.log("📱 Setting up browser context...")
   const context = await browser.newContext({
     viewport: { width: 1920, height: 1080 },
     userAgent:
@@ -47,18 +49,22 @@ async function scrapTajo() {
   })
 
   const page = await context.newPage()
+  console.log("📄 New page created")
   const MAX_RETRIES = 3
   let AllData = []
   const processedEmbalses = new Set()
 
   try {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      console.log(`\n🔄 Attempt ${attempt}/${MAX_RETRIES}`)
       try {
+        console.log("🌐 Navigating to SAIH Tajo website...")
         await page.goto("https://saihtajo.chtajo.es/index.php#nav", {
           waitUntil: "networkidle",
           timeout: 30000,
         })
 
+        console.log('🔍 Looking for "Datos Tiempo Real" button...')
         const datosTiempoRealButtonSelector =
           'ons-toolbar-button.toolbar-button[href*="get-datos-tiempo-real"]'
         await page.waitForSelector(datosTiempoRealButtonSelector, {
@@ -88,6 +94,7 @@ async function scrapTajo() {
         await page.waitForSelector(embButton, { state: "visible", timeout: 15000 })
         const regions = await page.$$(embButton)
 
+        console.log("📊 Processing reservoirs...")
         for (const region of regions) {
           await region.click({ force: true })
           await page.waitForTimeout(1000)
@@ -124,8 +131,10 @@ async function scrapTajo() {
                 (node) => node.innerText.trim()
               )
 
+              console.log(`\n🌊 Processing reservoir: ${embalseName}`)
+
               if (processedEmbalses.has(embalseName)) {
-                console.warn(`Skipping duplicate embalse: ${embalseName}`)
+                console.log(`⚠️ Skipping duplicate reservoir: ${embalseName}`)
                 continue
               }
 
@@ -170,6 +179,11 @@ async function scrapTajo() {
                   (node) => node.innerText
                 )
 
+                console.log(`✅ Data collected for ${scrapedEmbalseName}:`)
+                console.log(`   Volume: ${volumenValue}`)
+                console.log(`   Percentage: ${porcentajeValue}`)
+                console.log(`   Level: ${cotaValue}`)
+
                 if (!processedEmbalses.has(embalseName)) {
                   AllData.push({
                     embalse: scrapedEmbalseName.split("-").slice(1).join("-").trim(),
@@ -184,8 +198,10 @@ async function scrapTajo() {
                   console.warn(`Duplicate embalse found: ${embalseName}`)
                 }
               } catch (error) {
-                console.warn(`No metric found for this embalse: ${embalseName}`)
-                console.log(error.message)
+                console.error(
+                  `❌ Error processing metrics for ${embalseName}:`,
+                  error.message
+                )
               }
               const closeButtonSelector = "#cerrar-dialog-estacion"
               await page.waitForSelector(closeButtonSelector, {
@@ -200,7 +216,7 @@ async function scrapTajo() {
 
         break
       } catch (error) {
-        console.warn(`Attempt ${attempt} failed:`, error)
+        console.error(`❌ Attempt ${attempt} failed:`, error.message)
         if (attempt === MAX_RETRIES) {
           console.error("Max retries reached. Scraping failed.")
           throw error
@@ -210,13 +226,18 @@ async function scrapTajo() {
     }
     return AllData
   } catch (error) {
-    console.error("Scraping failed:", error)
+    console.error("💥 Fatal error during scraping:", error.message)
+    throw error
   } finally {
+    console.log("🔒 Closing browser...")
     await browser.close()
   }
 }
 
 async function FuzzData(data) {
+  console.log("\n🔤 Starting fuzzy matching...")
+  console.log(`📊 Processing ${data.length} reservoir entries`)
+
   const manualOverrides = {
     burguillo: "Burguillo",
     "guadiloba - caceres": "Cáceres - Guadiloba",
@@ -224,13 +245,16 @@ async function FuzzData(data) {
 
   return data.reduce((acc, item) => {
     if (item.embalse === 0) {
+      console.log("⚠️ Skipping invalid reservoir name")
       return acc
     }
 
     let matchedName = item.embalse.toLowerCase()
+    console.log(`\n🔍 Processing: "${item.embalse}"`)
 
     if (manualOverrides.hasOwnProperty(matchedName)) {
       const overrideName = manualOverrides[matchedName]
+      console.log(`📝 Manual override applied: "${matchedName}" → "${overrideName}"`)
       matchedName = overrideName
       acc.push({ ...item, embalse: matchedName })
     } else {
@@ -238,8 +262,12 @@ async function FuzzData(data) {
         item.embalse.toLowerCase(),
         names
       )
+      console.log(`🎯 Match score: ${puntaje.toFixed(3)} for "${nombre}"`)
       if (puntaje >= 0.9) {
+        console.log(`✅ Accepted match: "${item.embalse}" → "${nombre}"`)
         acc.push({ ...item, embalse: nombre })
+      } else {
+        console.log(`❌ Rejected match: Score too low`)
       }
     }
     return acc
@@ -247,11 +275,17 @@ async function FuzzData(data) {
 }
 
 async function InsertData(data) {
-  console.log(data)
-  for (const row of data) {
-    if (!row.embalse) continue
+  console.log("\n💾 Starting database insertion...")
+  console.log(`📊 Processing ${data.length} entries`)
 
-    console.log(`Processing ${row.embalse}...`)
+  for (const row of data) {
+    if (!row.embalse) {
+      console.log("⚠️ Skipping entry with no reservoir name")
+      continue
+    }
+
+    console.log(`\n📝 Inserting data for "${row.embalse}"...`)
+    console.log(`   Values: ${JSON.stringify(row, null, 2)}`)
 
     const { error } = await supabase.from("live_data").insert({
       id: `${row.embalse}_${new Date().toISOString()}`,
@@ -263,25 +297,34 @@ async function InsertData(data) {
     })
 
     if (error) {
-      console.error(`Error inserting data for ${row.nombre}:`, error)
+      console.error(`❌ Error inserting data for ${row.embalse}:`, error.message)
     } else {
-      console.log(`Successfully inserted data for ${row.nombre}`)
+      console.log(`✅ Successfully inserted data for ${row.embalse}`)
     }
   }
 }
 
 async function main() {
+  console.log("🎯 Starting Tajo scraping process...")
+  console.time("Total execution time")
+
   try {
-    console.log("Starting Tajo scraping...")
+    console.log("\n📊 Phase 1: Web scraping...")
     let AllData = await scrapTajo()
-    console.log("Applying fuzzy matching...")
+
+    console.log("\n🔤 Phase 2: Data processing...")
     AllData = await FuzzData(AllData)
     const data = await FuzzData(AllData)
-    console.log("Inserting data...")
+
+    console.log("\n💾 Phase 3: Database insertion...")
     await InsertData(data)
-    console.log("Process completed successfully")
+
+    console.log("\n✨ Process completed successfully")
   } catch (error) {
-    console.error("Error in the process:", error)
+    console.error("\n💥 Fatal error:", error.message)
+    process.exit(1)
+  } finally {
+    console.timeEnd("Total execution time")
   }
 }
 

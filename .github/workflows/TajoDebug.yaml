@@ -1,0 +1,39 @@
+name: AcuaNet Cron Jobs
+on:
+  schedule:
+    - cron: "0 2 */2 * *"
+  push:
+jobs:
+  run-scripts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: pnpm/action-setup@v2
+        with:
+          version: latest
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps
+      - run: pnpm node SahiTajoDebug.js
