@@ -17,20 +17,31 @@ if (!supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 const insertData = async (data) => {
-  const { error } = await supabase.from("live_data").insert(
-    data.map((item) => ({
-      id: `${item.nombre}_${new Date().toISOString()}`,
-      embalse: item.nombre,
-      cota: item.cota,
-      volumen: item.volumen,
-      porcentaje: item.porcentaje,
-      timestamp: item.timestamp,
-    }))
-  )
+  console.log("\n💾 Starting database insertion...")
+  console.log(`📊 Processing ${data.length} entries`)
 
-  if (error) {
-    console.error("Error inserting data:", error.message)
+  let insertCount = 0
+  for (const row of data) {
+    try {
+      const { error } = await supabase.from("live_data").insert({
+        id: `${row.nombre}_${new Date().toISOString()}`,
+        embalse: row.nombre,
+        cota: row.cota,
+        volumen: row.volumen,
+        porcentaje: row.porcentaje,
+        timestamp: row.timestamp,
+      })
+
+      if (error) {
+        console.error(`❌ Error inserting data for ${row.nombre}:`, error.message)
+      } else {
+        insertCount++
+      }
+    } catch (error) {
+      console.error(`❌ Error inserting data for ${row.nombre}:`, error)
+    }
   }
+  console.log(`✅ Successfully inserted ${insertCount} entries into the database.`)
 }
 
 // Function to find the best match
@@ -55,14 +66,21 @@ function encontrarMejorCoincidencia(nombreScraped, nombresCorrectos) {
 
 // Modified Guadalquivir scraper
 async function scrapGuadalquivir() {
-  const browser = await chromium.launch()
+  console.log("🚀 Initializing browser...")
+  const browser = await chromium.launch({
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  })
   const page = await browser.newPage()
+  console.log("📄 New page created")
 
   try {
+    console.log("🌐 Navigating to SAIH Guadalquivir website...")
     await page.goto("https://www.chguadalquivir.es/saih/EmbalNiv.aspx", {
       waitUntil: "networkidle",
+      timeout: 30000,
     })
-    await page.waitForSelector("table")
+    console.log("✅ Page loaded")
+    await page.waitForSelector("table", { state: "visible" })
 
     const zones = await page.$$eval("#DDBzona option", (options) =>
       options.map((opt) => ({
@@ -72,40 +90,48 @@ async function scrapGuadalquivir() {
     )
 
     let allData = []
+    let zoneCount = 0
 
     for (const zone of zones) {
-      await page.selectOption("#DDBzona", zone.value)
-      await page.waitForTimeout(2000)
+      zoneCount++
+      console.log(`\n🗺️  Processing Zone ${zoneCount}/${zones.length}`)
+      try {
+        await page.selectOption("#DDBzona", zone.value)
+        await page.waitForTimeout(2000)
 
-      const zoneData = await page.$$eval(
-        ".gridViewPersonalizado tr:not(:first-child)",
-        (rows) => {
-          return rows
-            .map((row) => {
-              const cells = row.querySelectorAll("td")
-              if (cells.length < 3) return null
+        const zoneData = await page.$$eval(
+          ".gridViewPersonalizado tr:not(:first-child)",
+          (rows) => {
+            return rows
+              .map((row) => {
+                const cells = row.querySelectorAll("td")
+                if (cells.length < 3) return null
 
-              const embalse = cells[0]?.textContent
-              const nmn = cells[2]?.textContent
-              const volumen = cells[5]?.textContent
-              const porcentaje = cells[7]?.textContent
+                const embalse = cells[0]?.textContent
+                const nmn = cells[2]?.textContent
+                const volumen = cells[5]?.textContent
+                const porcentaje = cells[7]?.textContent
 
-              if (embalse && nmn) {
-                const nombre = embalse.trim().slice(3, -4).trim()
-                return {
-                  nombre,
-                  cota: nmn.replace(",", "."),
-                  volumen: volumen.replace(",", "."),
-                  porcentaje: porcentaje.replace(",", "."),
-                  timestamp: new Date().toISOString(),
+                if (embalse && nmn) {
+                  const nombre = embalse.trim().slice(3, -4).trim()
+                  return {
+                    nombre,
+                    cota: nmn.replace(",", "."),
+                    volumen: volumen.replace(",", "."),
+                    porcentaje: porcentaje.replace(",", "."),
+                    timestamp: new Date().toISOString(),
+                  }
                 }
-              }
-              return null
-            })
-            .filter(Boolean)
-        }
-      )
-      allData.push(...zoneData)
+                return null
+              })
+              .filter(Boolean)
+          }
+        )
+        allData.push(...zoneData)
+      } catch (error) {
+        console.error(`❌ Error processing zone ${zone.text}:`, error)
+        continue
+      }
     }
 
     // Manual overrides
@@ -120,7 +146,9 @@ async function scrapGuadalquivir() {
     }
 
     // Apply fuzzy matching to all names
+    let processedCount = 0
     allData = allData.map((item) => {
+      processedCount++
       const { nombre, puntaje } = encontrarMejorCoincidencia(
         item.nombre.toLowerCase(),
         nombres
@@ -130,6 +158,7 @@ async function scrapGuadalquivir() {
         nombre: nombre,
       }
     })
+    console.log(`✅ Fuzzy matching complete. Processed ${processedCount} entries.`)
 
     allData = allData
       .map((item) => {
@@ -151,21 +180,31 @@ async function scrapGuadalquivir() {
     )
 
     return uniqueData
+  } catch (error) {
+    console.error("❌ Scraping failed:", error)
+    throw error // Re-throw the error to be caught by the main function
   } finally {
     await browser.close()
+    console.log("🔒 Browser closed")
   }
 }
 
 async function main() {
+  console.log("🎯 Starting Guadalquivir scraping process...")
+  console.time("Total execution time")
+
   try {
-    console.log("Starting Guadalquivir scraping...")
+    console.log("\n📊 Phase 1: Web scraping...")
     const datosGuadalquivir = await scrapGuadalquivir()
-    console.log("Processed data:", datosGuadalquivir)
-    console.log("Inserting data into Supabase...")
+
+    console.log("\n💾 Phase 2: Database insertion...")
     await insertData(datosGuadalquivir)
-    console.log("Process completed successfully")
+
+    console.log("\n✨ Process completed successfully")
   } catch (error) {
-    console.error("Error in the process:", error)
+    console.error("\n💥 Error in the process:", error)
+  } finally {
+    console.timeEnd("Total execution time")
   }
 }
 

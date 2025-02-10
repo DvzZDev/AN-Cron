@@ -83,15 +83,22 @@ async function processMarker(context, markerIndex, url) {
     const data = await page.evaluate(() => {
       try {
         const modal = document.querySelector("#myModal")
-        if (!modal) throw new Error("Modal not found")
+        if (!modal) {
+          console.error("Modal element not found")
+          return { error: "Modal not found" }
+        }
 
         const nameCell = modal.querySelector(
           "table:nth-child(1) tbody tr:nth-child(5) td.col-sm-5"
         )
         if (!nameCell) {
-          console.error("Name cell not found. Modal content:", modal.innerHTML)
-          throw new Error("Reservoir name cell not found")
+          console.error("Name cell not found")
+          return { error: "Name cell not found", modalContent: modal.innerHTML }
         }
+
+        // Add debug logging
+        console.log("Modal content:", modal.innerHTML)
+        console.log("Name cell content:", nameCell.textContent)
 
         const reservoir = {
           embalse: nameCell.textContent
@@ -109,58 +116,65 @@ async function processMarker(context, markerIndex, url) {
 
         const table = modal.querySelector(".modal-body table:nth-child(2)")
         if (!table) {
-          console.error(
-            "Data table not found. Tables in modal:",
-            modal.querySelectorAll("table").length
-          )
-          throw new Error("Data table not found")
+          return {
+            error: "Data table not found",
+            modalTables: Array.from(modal.querySelectorAll("table")).length,
+          }
         }
 
+        let foundData = false
         table.querySelectorAll("tr").forEach((row, idx) => {
           const cells = row.querySelectorAll("td")
           if (cells.length >= 3) {
             const label = cells[0].textContent.trim().toLowerCase()
             const rawValue = cells[2].textContent.trim()
-            const value = parseFloat(rawValue.replace(",", "."))
-            if (!isNaN(value)) {
-              if (label.includes("volumen embalse")) reservoir.volumen = value
-              else if (label.includes("cota embalse")) reservoir.cota = value
-              else if (label.includes("porcentaje volumen")) reservoir.porcentaje = value
+
+            // Handle 'n/d' values by setting them to 0
+            if (rawValue === "n/d") {
+              if (label.includes("volumen embalse")) reservoir.volumen = 0
+              else if (label.includes("cota embalse")) reservoir.cota = 0
+              else if (label.includes("porcentaje volumen")) reservoir.porcentaje = 0
+              foundData = true // Consider 'n/d' as valid data with value 0
+            } else {
+              const value = parseFloat(rawValue.replace(",", "."))
+              if (!isNaN(value)) {
+                foundData = true
+                if (label.includes("volumen embalse")) reservoir.volumen = value
+                else if (label.includes("cota embalse")) reservoir.cota = value
+                else if (label.includes("porcentaje volumen"))
+                  reservoir.porcentaje = value
+              }
             }
           }
         })
 
-        if (!reservoir.embalse) throw new Error("Reservoir name not found")
-        if (!reservoir.cota && !reservoir.volumen && !reservoir.porcentaje) {
-          console.error("No valid data found for reservoir:", reservoir)
-          throw new Error("No valid data found for reservoir")
+        // Also modify the data validation check:
+        if (!foundData) {
+          return {
+            error: "No data found in table",
+            reservoir: reservoir,
+            tableContent: table.innerHTML,
+          }
         }
 
+        // Return the reservoir data even if some values are null
         return reservoir
       } catch (err) {
-        console.error("Error extracting reservoir data:", err.message)
-        return null
+        return { error: `Error in page evaluation: ${err.message}` }
       }
     })
 
-    if (!data) {
-      throw new Error("Failed to extract reservoir data")
+    if (data.error) {
+      throw new Error(`Data extraction failed: ${JSON.stringify(data)}`)
     }
 
-    // Close modal
-    await page.evaluate(() => {
-      const closeBtn = document.querySelector(".modal-header .close")
-      if (closeBtn) {
-        closeBtn.scrollIntoView({ block: "center" })
-        closeBtn.dispatchEvent(
-          new MouseEvent("click", { bubbles: true, cancelable: true })
-        )
-      }
-    })
-    await page.waitForSelector("#myModal", { state: "hidden", timeout: 10000 })
     dataObj.reservoir = data
   } catch (error) {
-    console.error(`Error processing marker ${markerIndex + 1}:`, error)
+    console.error(`Error processing marker ${markerIndex + 1}:`, {
+      error: error.message,
+      url: url,
+      markerIndex: markerIndex,
+    })
   } finally {
     await page.close()
   }

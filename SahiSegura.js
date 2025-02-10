@@ -35,21 +35,24 @@ function encontrarMejorCoincidencia(nombreScraped, nombresCorrectos) {
 }
 
 async function scrapEbro() {
+  console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
 
   const page = await browser.newPage()
+  console.log("📄 New page created")
   const allData = []
 
   try {
+    console.log("🌐 Navigating to SAIH Segura website...")
     await page.goto("https://saihweb.chsegura.es/apps/iVisor/embalses3.php", {
       waitUntil: "networkidle",
     })
-    console.log("Page loaded")
+    console.log("✅ Page loaded")
     await page.waitForSelector("#historico > div:nth-child(4) > div:nth-child(2)")
-    console.log("Data loaded")
+    console.log("✅ Data loaded")
     const data = await page.evaluate(() => {
       const divs = document.querySelectorAll(
         'div[style="width:100%;float:left;height:18px;text-align:right;color:#FFFFFF;"]'
@@ -89,8 +92,9 @@ async function scrapEbro() {
     )
     console.log("Specific div content:", specificDivContent)
   } catch (error) {
-    console.error("Scraping failed:", error)
+    console.error("❌ Scraping failed:", error)
   } finally {
+    console.log("🔒 Closing browser...")
     await browser.close()
   }
 
@@ -98,6 +102,9 @@ async function scrapEbro() {
 }
 
 async function FuzzData(data) {
+  console.log("\n🔤 Starting fuzzy matching...")
+  console.log(`📊 Processing ${data.length} reservoir entries`)
+
   const manualOverrides = {
     "la estanca": "Alcañiz (Estanca)",
     "puente santolea": "Puente de Santolea",
@@ -106,81 +113,91 @@ async function FuzzData(data) {
     val: 0,
   }
 
-  const processedNames = new Set()
-
-  return data.reduce((acc, item) => {
-    if (item.embalse === 0) {
-      return acc
-    }
-
-    let matchedName = item.embalse.toLowerCase()
-
-    if (manualOverrides.hasOwnProperty(matchedName)) {
-      const overrideName = manualOverrides[matchedName]
-      if (processedNames.has(overrideName)) {
-        console.log(`Skipping duplicate: ${overrideName}`)
-        return acc
+  let processedCount = 0
+  const result = data
+    .map((item) => {
+      processedCount++
+      if (item.embalse === 0) {
+        console.warn("⚠️ Skipping invalid reservoir name")
+        return null
       }
-      console.log(`Manual override: ${matchedName} -> ${overrideName}`)
-      processedNames.add(overrideName)
-      acc.push({ ...item, embalse: overrideName })
-    } else {
-      const { nombre, puntaje } = encontrarMejorCoincidencia(
-        item.embalse.toLowerCase(),
-        names
-      )
-      if (processedNames.has(nombre)) {
-        console.log(`Skipping duplicate: ${nombre}`)
-        return acc
-      }
-      console.log(`Matching: ${item.embalse} -> ${nombre} (score: ${puntaje})`)
 
-      if (puntaje >= 0.9) {
-        processedNames.add(nombre)
-        acc.push({ ...item, embalse: nombre })
+      let matchedName = item.embalse.toLowerCase()
+
+      if (manualOverrides.hasOwnProperty(matchedName)) {
+        matchedName = manualOverrides[matchedName]
       } else {
-        console.warn(`Low match score (< 0.9): ${item.embalse} -> ${nombre} (${puntaje})`)
+        const { nombre, puntaje } = encontrarMejorCoincidencia(
+          item.embalse.toLowerCase(),
+          names
+        )
+        if (puntaje >= 0.9) {
+          matchedName = nombre
+        } else {
+          console.warn(`❌ Rejected match: Score too low for ${item.embalse}`)
+          return null
+        }
       }
-    }
-    return acc
-  }, [])
+      return { ...item, embalse: matchedName }
+    })
+    .filter((item) => item !== null)
+
+  console.log(`✅ Fuzzy matching complete. Processed ${processedCount} entries.`)
+  return result
 }
 
 async function InsertData(data) {
-  console.log(data)
+  console.log("\n💾 Starting database insertion...")
+  console.log(`📊 Processing ${data.length} entries`)
+
+  let insertCount = 0
   for (const row of data) {
-    if (!row.embalse) continue
+    if (!row.embalse) {
+      console.warn("⚠️ Skipping entry with no reservoir name")
+      continue
+    }
 
-    console.log(`Processing ${row.embalse}...`)
+    try {
+      const { error } = await supabase.from("live_data").insert({
+        id: `${row.embalse}_${new Date().toISOString()}`,
+        embalse: row.embalse,
+        cota: row.cota,
+        volumen: row.volumen,
+        porcentaje: row.porcentaje,
+        timestamp: row.timestamp,
+      })
 
-    const { error } = await supabase.from("live_data").insert({
-      id: `${row.embalse}_${row.timestamp}`,
-      embalse: row.embalse,
-      cota: row.cota,
-      volumen: row.volumen,
-      porcentaje: row.porcentaje,
-      timestamp: row.timestamp,
-    })
-
-    if (error) {
-      console.error(`Error inserting data for ${row.embalse}:`, error)
-    } else {
-      console.log(`Successfully inserted data for ${row.embalse}`)
+      if (error) {
+        console.error(`❌ Error inserting data for ${row.embalse}:`, error)
+      } else {
+        insertCount++
+      }
+    } catch (error) {
+      console.error(`❌ Error inserting data for ${row.embalse}:`, error)
     }
   }
+  console.log(`✅ Successfully inserted ${insertCount} entries into the database.`)
 }
 
 async function main() {
+  console.log("🎯 Starting Segura scraping process...")
+  console.time("Total execution time")
+
   try {
-    console.log("Starting Ebro scraping...")
+    console.log("\n📊 Phase 1: Web scraping...")
     let AllData = await scrapEbro()
-    console.log("Applying fuzzy matching...")
+
+    console.log("\n🔤 Phase 2: Data processing...")
     AllData = await FuzzData(AllData)
-    console.log("Inserting data...")
+
+    console.log("\n💾 Phase 3: Database insertion...")
     await InsertData(AllData)
-    console.log("Process completed successfully")
+
+    console.log("\n✨ Process completed successfully")
   } catch (error) {
-    console.error("Error in the process:", error)
+    console.error("\n💥 Fatal error:", error.message)
+  } finally {
+    console.timeEnd("Total execution time")
   }
 }
 

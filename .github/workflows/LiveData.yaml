@@ -36,7 +36,7 @@ jobs:
             ${{ runner.os }}-playwright-
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps
-      - run: pnpm node SahiTajoDebug.js
+      - run: pnpm node SahiTajo.js
       - run: pnpm node SahiGuadiana.js
       - run: pnpm node SahiEbro.js
       - run: pnpm node SahiGuadalquivir.js

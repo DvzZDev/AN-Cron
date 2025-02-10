@@ -69,6 +69,7 @@ async function processReservoirBatch(links, browser) {
 }
 
 async function scrapDuero() {
+  console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     args: ["--disable-dev-shm-usage"],
   })
@@ -78,6 +79,7 @@ async function scrapDuero() {
 
   try {
     const page = await browser.newPage()
+    console.log("📄 New page created")
     await loadPageWithRetry(page, 3)
     await page.waitForSelector("table", { state: "visible" })
 
@@ -89,8 +91,11 @@ async function scrapDuero() {
     )
 
     const batches = chunk(reservoirLinks, BATCH_SIZE)
+    let batchCount = 0
 
     for (const batch of batches) {
+      batchCount++
+      console.log(`\n📦 Processing Batch ${batchCount}/${batches.length}`)
       const batchResults = await processReservoirBatch(batch, browser)
       AllData.push(...batchResults)
       await delay(DELAY_BETWEEN_BATCHES)
@@ -99,7 +104,7 @@ async function scrapDuero() {
     return AllData
   } finally {
     await browser.close()
-    console.log("Browser closed")
+    console.log("🔒 Browser closed")
   }
 }
 
@@ -111,7 +116,7 @@ async function loadPageWithRetry(page, maxRetries) {
         waitUntil: "networkidle",
         timeout: 30000,
       })
-      console.log("Page loaded successfully.")
+      console.log("✅ Page loaded successfully.")
       return
     } catch (error) {
       if (attempt === maxRetries) {
@@ -164,16 +169,19 @@ async function getDetailedData(page, embalse) {
       porcentaje: values[2],
     }
 
-    console.log(`Detailed data fetched successfully for ${embalse}.`)
+    console.log(`✅ Detailed data fetched successfully for ${embalse}.`)
     return reservoirData
   } catch (error) {
-    console.error(`Error getting detailed data for ${embalse}: ${error.message}`)
+    console.error(`❌ Error getting detailed data for ${embalse}: ${error.message}`)
     return null
   }
 }
 
 async function saveDataToSupabase(data) {
-  console.log("Saving data to Supabase...")
+  console.log("\n💾 Starting database insertion...")
+  console.log(`📊 Processing ${data.length} entries`)
+
+  let insertCount = 0
   for (const row of data) {
     try {
       const { error } = await supabase.from("live_data").insert({
@@ -187,66 +195,80 @@ async function saveDataToSupabase(data) {
 
       if (error) {
         console.error(
-          `Error inserting data for ${row.embalse} in Supabase:`,
+          `❌ Error inserting data for ${row.embalse} in Supabase:`,
           error.message
         )
       } else {
-        console.log(`Data for ${row.embalse} saved successfully to Supabase.`)
+        insertCount++
       }
     } catch (error) {
-      console.error(`Failed to save data for ${row.embalse}:`, error)
+      console.error(`❌ Failed to save data for ${row.embalse}:`, error)
     }
   }
-  console.log("Data saving to Supabase completed.")
+  console.log(`✅ Successfully inserted ${insertCount} entries into the database.`)
 }
 
 async function FuzzData(data) {
+  console.log("\n🔤 Starting fuzzy matching...")
+  console.log(`📊 Processing ${data.length} reservoir entries`)
+
   const manualOverrides = {
     "cervera-ruesga": "Cervera",
     "la requejada": "Requejada",
   }
 
-  return data.reduce((acc, item) => {
-    if (item.embalse === 0) {
-      return acc
-    }
-
-    let matchedName = item.embalse.toLowerCase()
-
-    if (manualOverrides.hasOwnProperty(matchedName)) {
-      const overrideName = manualOverrides[matchedName]
-      matchedName = overrideName
-      console.log(`Matching: ${item.embalse} -> ${matchedName} (override)`)
-      acc.push({ ...item, embalse: matchedName })
-    } else {
-      const { nombre, puntaje } = encontrarMejorCoincidencia(
-        item.embalse.toLowerCase(),
-        names
-      )
-      console.log(`Matching: ${item.embalse} -> ${nombre} (score: ${puntaje.toFixed(2)})`)
-      if (puntaje >= 0.9) {
-        acc.push({ ...item, embalse: nombre })
-      } else {
-        console.warn(
-          `Low match score (${puntaje}) for "${item.embalse}" -> Best match: "${nombre}"`
-        )
+  let processedCount = 0
+  const result = data
+    .map((item) => {
+      processedCount++
+      if (item.embalse === 0) {
+        console.warn("⚠️ Skipping invalid reservoir name")
+        return null
       }
-    }
-    return acc
-  }, [])
+
+      let matchedName = item.embalse.toLowerCase()
+
+      if (manualOverrides.hasOwnProperty(matchedName)) {
+        matchedName = manualOverrides[matchedName]
+      } else {
+        const { nombre, puntaje } = encontrarMejorCoincidencia(
+          item.embalse.toLowerCase(),
+          names
+        )
+        if (puntaje >= 0.9) {
+          matchedName = nombre
+        } else {
+          console.warn(`❌ Rejected match: Score too low for ${item.embalse}`)
+          return null
+        }
+      }
+      return { ...item, embalse: matchedName }
+    })
+    .filter((item) => item !== null)
+
+  console.log(`✅ Fuzzy matching complete. Processed ${processedCount} entries.`)
+  return result
 }
 
 async function main() {
+  console.log("🎯 Starting Duero scraping process...")
+  console.time("Total execution time")
+
   try {
-    console.log("Starting Duero scraping...")
+    console.log("\n📊 Phase 1: Web scraping...")
     const data = await scrapDuero()
+
+    console.log("\n🔤 Phase 2: Data processing...")
     const fuzzedData = await FuzzData(data)
-    console.log("Data extracted and processed successfully")
-    console.log("Saving data to Supabase...")
+
+    console.log("\n💾 Phase 3: Database insertion...")
     await saveDataToSupabase(fuzzedData)
-    console.log("Duero scraping process completed successfully")
+
+    console.log("\n✨ Process completed successfully")
   } catch (error) {
-    console.error("Error in the Duero scraping process:", error)
+    console.error("\n💥 Error in the Duero scraping process:", error)
+  } finally {
+    console.timeEnd("Total execution time")
   }
 }
 

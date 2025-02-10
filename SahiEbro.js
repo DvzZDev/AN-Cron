@@ -35,15 +35,18 @@ function encontrarMejorCoincidencia(nombreScraped, nombresCorrectos) {
 }
 
 async function scrapEbro() {
+  console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   })
 
   const page = await browser.newPage()
+  console.log("📄 New page created")
   const allData = []
 
   try {
+    console.log("🌐 Navigating to SAIH Ebro website...")
     await page.goto(
       "https://www.saihebro.com/tiempo-real/mapa-embalses-HG-toda-la-cuenca",
       {
@@ -51,13 +54,17 @@ async function scrapEbro() {
         timeout: 30000,
       }
     )
+    console.log("✅ Page loaded")
 
     const zoneLinks = await page.$$eval(
       'g[style="transform: translate(260px, 140px) scale(0.385);"] a.seleccion-zona',
       (links) => links.map((link) => link.getAttribute("href"))
     )
 
+    let zoneCount = 0
     for (const link of zoneLinks) {
+      zoneCount++
+      console.log(`\n🗺️  Processing Zone ${zoneCount}/${zoneLinks.length}`)
       try {
         await page.goto(`https://www.saihebro.com${link}`, {
           waitUntil: "networkidle",
@@ -112,20 +119,24 @@ async function scrapEbro() {
 
         await page.goBack()
       } catch (error) {
-        console.error(`Error processing zone ${link}:`, error)
+        console.error(`❌ Error processing zone ${link}:`, error)
         continue
       }
     }
   } catch (error) {
-    console.error("Scraping failed:", error)
+    console.error("❌ Scraping failed:", error)
   } finally {
     await browser.close()
+    console.log("🔒 Browser closed")
   }
 
   return allData
 }
 
 async function FuzzData(data) {
+  console.log("\n🔤 Starting fuzzy matching...")
+  console.log(`📊 Processing ${data.length} reservoir entries`)
+
   const manualOverrides = {
     "la estanca": "Alcañiz (Estanca)",
     "puente santolea": "Puente de Santolea",
@@ -134,45 +145,49 @@ async function FuzzData(data) {
     val: 0,
   }
 
-  const processedNames = new Set()
-
-  return data.reduce((acc, item) => {
-    if (item.embalse === 0) {
-      return acc
-    }
-
-    let matchedName = item.embalse.toLowerCase()
-
-    if (manualOverrides.hasOwnProperty(matchedName)) {
-      const overrideName = manualOverrides[matchedName]
-      if (processedNames.has(overrideName)) {
-        return acc
-      }
-      processedNames.add(overrideName)
-      acc.push({ ...item, embalse: overrideName })
-    } else {
-      const { nombre, puntaje } = encontrarMejorCoincidencia(
-        item.embalse.toLowerCase(),
-        names
-      )
-      if (processedNames.has(nombre)) {
-        return acc
+  let processedCount = 0
+  const result = data
+    .map((item) => {
+      processedCount++
+      if (item.embalse === 0) {
+        console.warn("⚠️ Skipping invalid reservoir name")
+        return null
       }
 
-      if (puntaje >= 0.9) {
-        processedNames.add(nombre)
-        acc.push({ ...item, embalse: nombre })
+      let matchedName = item.embalse.toLowerCase()
+
+      if (manualOverrides.hasOwnProperty(matchedName)) {
+        matchedName = manualOverrides[matchedName]
       } else {
-        console.warn(`Low match score (< 0.9): ${item.embalse} -> ${nombre} (${puntaje})`)
+        const { nombre, puntaje } = encontrarMejorCoincidencia(
+          item.embalse.toLowerCase(),
+          names
+        )
+        if (puntaje >= 0.9) {
+          matchedName = nombre
+        } else {
+          console.warn(`❌ Rejected match: Score too low for ${item.embalse}`)
+          return null
+        }
       }
-    }
-    return acc
-  }, [])
+      return { ...item, embalse: matchedName }
+    })
+    .filter((item) => item !== null)
+
+  console.log(`✅ Fuzzy matching complete. Processed ${processedCount} entries.`)
+  return result
 }
 
 async function InsertData(data) {
+  console.log("\n💾 Starting database insertion...")
+  console.log(`📊 Processing ${data.length} entries`)
+
+  let insertCount = 0
   for (const row of data) {
-    if (!row.embalse) continue
+    if (!row.embalse) {
+      console.warn("⚠️ Skipping entry with no reservoir name")
+      continue
+    }
 
     const { error } = await supabase.from("live_data").insert({
       id: `${row.embalse}_${row.timestamp}`,
@@ -184,24 +199,33 @@ async function InsertData(data) {
     })
 
     if (error) {
-      console.error(`Error inserting data for ${row.embalse}:`, error)
+      console.error(`❌ Error inserting data for ${row.embalse}:`, error)
     } else {
-      console.log(`Successfully inserted data for ${row.embalse}`)
+      insertCount++
     }
   }
+  console.log(`✅ Successfully inserted ${insertCount} entries into the database.`)
 }
 
 async function main() {
+  console.log("🎯 Starting Ebro scraping process...")
+  console.time("Total execution time")
+
   try {
-    console.log("Starting Ebro scraping...")
+    console.log("\n📊 Phase 1: Web scraping...")
     let AllData = await scrapEbro()
-    console.log("Applying fuzzy matching...")
+
+    console.log("\n🔤 Phase 2: Data processing...")
     AllData = await FuzzData(AllData)
-    console.log("Inserting data...")
+
+    console.log("\n💾 Phase 3: Database insertion...")
     await InsertData(AllData)
-    console.log("Process completed successfully")
+
+    console.log("\n✨ Process completed successfully")
   } catch (error) {
-    console.error("Error in the process:", error)
+    console.error("\n💥 Error in the process:", error)
+  } finally {
+    console.timeEnd("Total execution time")
   }
 }
 
