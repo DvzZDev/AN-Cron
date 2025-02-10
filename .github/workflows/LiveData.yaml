@@ -2,7 +2,7 @@ name: AcuaNet Cron Jobs
 
 on:
   schedule:
-    - cron: "0 23 */2 * *"
+    - cron: "0 2 */2 * *"
   push:
 
 jobs:
@@ -41,9 +41,6 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Catch Data 2025
-        run: pnpm node Embalses2025.js
 
       - name: Catch SahiTajo
         run: pnpm node SahiTajo.js
