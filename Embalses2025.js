@@ -72,9 +72,9 @@ async function downloadAndProcessData() {
 
     console.log("Leyendo datos de la base de datos Access...")
     const rows = await readAccessDb(tableName)
-
+    console.log("Transformando datos a JSON")
     const datosJSON = processDataToJSON(rows)
-    console.log("Insertando Datos en DB", datosJSON)
+    console.log("Insertando datos")
     await insertData(datosJSON)
   } catch (error) {
     console.error("Error en downloadAndProcessData:", error)
