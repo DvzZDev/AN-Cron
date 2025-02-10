@@ -109,7 +109,6 @@ async function scrapEbro() {
         )
 
         allData.push(...pageData)
-        console.log(allData)
 
         await page.goBack()
       } catch (error) {
@@ -147,10 +146,8 @@ async function FuzzData(data) {
     if (manualOverrides.hasOwnProperty(matchedName)) {
       const overrideName = manualOverrides[matchedName]
       if (processedNames.has(overrideName)) {
-        console.log(`Skipping duplicate: ${overrideName}`)
         return acc
       }
-      console.log(`Manual override: ${matchedName} -> ${overrideName}`)
       processedNames.add(overrideName)
       acc.push({ ...item, embalse: overrideName })
     } else {
@@ -159,10 +156,8 @@ async function FuzzData(data) {
         names
       )
       if (processedNames.has(nombre)) {
-        console.log(`Skipping duplicate: ${nombre}`)
         return acc
       }
-      console.log(`Matching: ${item.embalse} -> ${nombre} (score: ${puntaje})`)
 
       if (puntaje >= 0.9) {
         processedNames.add(nombre)
@@ -176,11 +171,8 @@ async function FuzzData(data) {
 }
 
 async function InsertData(data) {
-  console.log(data)
   for (const row of data) {
     if (!row.embalse) continue
-
-    console.log(`Processing ${row.embalse}...`)
 
     const { error } = await supabase.from("live_data").insert({
       id: `${row.embalse}_${row.timestamp}`,

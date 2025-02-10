@@ -3,7 +3,7 @@ name: AcuaNet Cron Jobs
 on:
   schedule:
     - cron: "0 23 */2 * *"
-  push:
+  # push:
 
 jobs:
   run-scripts:
