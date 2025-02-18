@@ -55,7 +55,7 @@ async function navigateAndClick(page, selector, timeout = 15000) {
       await page.waitForTimeout(getRandomDelay(1000, 2000))
       return true
     } else {
-      console.warn(`Element with selector ${selector} not found.`)
+      console.warn(`Element with selector ${selector} not found .`)
       return false
     }
   } catch (error) {
