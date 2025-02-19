@@ -104,7 +104,7 @@ async function scrapTajo() {
       "--disable-accelerated-2d-canvas",
       "--disable-gpu",
     ],
-    slowMo: 50, // Adds small delays between actions
+    slowMo: 50,
   })
 
   console.log("📱 Setting up browser context...")
@@ -175,8 +175,6 @@ async function scrapTajo() {
             for (let i = 0; i < embalses.length; i++) {
               const embalse = embalses[i]
               try {
-                await page.waitForTimeout(1000) // Add stability delay
-
                 const embalseName = await embalse.$eval(
                   ".center.list-item__center",
                   (node) => node.innerText.trim()
@@ -190,9 +188,7 @@ async function scrapTajo() {
                 }
 
                 console.log(`📍 Attempting to click on reservoir: ${embalseName}`)
-                await page.waitForTimeout(1000)
                 await embalse.scrollIntoViewIfNeeded()
-                await page.waitForTimeout(1000)
 
                 let clickSuccess = false
                 for (let attempt = 0; attempt < 3; attempt++) {
@@ -206,7 +202,6 @@ async function scrapTajo() {
                     console.warn(
                       `❌ Click attempt ${attempt + 1} failed for ${embalseName}`
                     )
-                    await page.waitForTimeout(1000)
                   }
                 }
 
