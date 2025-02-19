@@ -46,16 +46,45 @@ function getRandomDelay(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
+// Modify the navigateAndClick function to be more robust
 async function navigateAndClick(page, selector, timeout = 15000) {
   try {
-    await page.waitForSelector(selector, { state: "visible", timeout })
+    // Wait for element to be both present and visible
+    await page.waitForSelector(selector, {
+      state: "visible",
+      timeout,
+    })
+
+    // Add a small delay to ensure element is interactive
+    await page.waitForTimeout(1000)
+
+    // Ensure element is visible and clickable
     const element = await page.$(selector)
     if (element) {
-      await element.click({ force: true })
-      await page.waitForTimeout(getRandomDelay(1000, 2000))
+      const isVisible = await element.isVisible()
+      if (!isVisible) {
+        console.warn(
+          `Element with selector ${selector} is not visible, attempting scroll...`
+        )
+        await element.scrollIntoViewIfNeeded()
+        await page.waitForTimeout(1000)
+      }
+
+      // Try clicking with different strategies
+      try {
+        await element.click({ force: true, timeout: 5000 })
+      } catch (clickError) {
+        console.warn(`Direct click failed, trying alternative method for ${selector}`)
+        await page.evaluate((sel) => {
+          const elem = document.querySelector(sel)
+          if (elem) elem.click()
+        }, selector)
+      }
+
+      await page.waitForTimeout(getRandomDelay(1500, 2500))
       return true
     } else {
-      console.warn(`Element with selector ${selector} not found .`)
+      console.warn(`Element with selector ${selector} not found`)
       return false
     }
   } catch (error) {
@@ -68,7 +97,14 @@ async function scrapTajo() {
   console.log("🚀 Initializing browser...")
   const browser = await chromium.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+    ],
+    slowMo: 50, // Adds small delays between actions
   })
 
   console.log("📱 Setting up browser context...")
@@ -135,74 +171,120 @@ async function scrapTajo() {
             const embalseSelector = nestedExpandableSelector + " > ons-list-item"
             const embalses = await page.$$(embalseSelector)
 
+            // Modify the embalse click handling in scrapTajo function
             for (let i = 0; i < embalses.length; i++) {
               const embalse = embalses[i]
-              const embalseName = await embalse.$eval(
-                ".center.list-item__center",
-                (node) => node.innerText.trim()
-              )
-
-              if (processedEmbalses.has(embalseName)) {
-                continue
-              }
-
-              await embalse.scrollIntoViewIfNeeded()
-              await embalse.click({ force: true })
-              await page.waitForTimeout(getRandomDelay(1000, 2000))
-
               try {
-                const [cotaValue, volumenValue, porcentajeValue] = await page.evaluate(
-                  () => {
-                    const getMetricValue = (titleText) => {
-                      const containers = document.querySelectorAll(
-                        ".center.list-item__center"
-                      )
-                      for (const container of containers) {
-                        const titulo = container.querySelector(
-                          ".titulo-metrica-estacion .titulo"
+                await page.waitForTimeout(1000) // Add stability delay
+
+                const embalseName = await embalse.$eval(
+                  ".center.list-item__center",
+                  (node) => node.innerText.trim()
+                )
+
+                console.log(`\n🌊 Processing reservoir: ${embalseName}`)
+
+                if (processedEmbalses.has(embalseName)) {
+                  console.log(`⏭️  Skipping already processed reservoir: ${embalseName}`)
+                  continue
+                }
+
+                console.log(`📍 Attempting to click on reservoir: ${embalseName}`)
+                await page.waitForTimeout(1000)
+                await embalse.scrollIntoViewIfNeeded()
+                await page.waitForTimeout(1000)
+
+                let clickSuccess = false
+                for (let attempt = 0; attempt < 3; attempt++) {
+                  try {
+                    console.log(`🖱️  Click attempt ${attempt + 1}/3 for ${embalseName}`)
+                    await embalse.click({ force: true, timeout: 5000 })
+                    clickSuccess = true
+                    console.log(`✅ Successfully clicked on ${embalseName}`)
+                    break
+                  } catch (clickError) {
+                    console.warn(
+                      `❌ Click attempt ${attempt + 1} failed for ${embalseName}`
+                    )
+                    await page.waitForTimeout(1000)
+                  }
+                }
+
+                if (!clickSuccess) {
+                  console.error(`💔 Failed to click on ${embalseName} after 3 attempts`)
+                  continue
+                }
+
+                // Rest of your existing code...
+                try {
+                  console.log(`📊 Extracting metrics for ${embalseName}...`)
+                  const [cotaValue, volumenValue, porcentajeValue] = await page.evaluate(
+                    () => {
+                      const getMetricValue = (titleText) => {
+                        const containers = document.querySelectorAll(
+                          ".center.list-item__center"
                         )
-                        if (titulo && titulo.textContent.includes(titleText)) {
-                          const destacado = container.querySelector(
-                            ".dato-metrica-estacion.destacada"
+                        for (const container of containers) {
+                          const titulo = container.querySelector(
+                            ".titulo-metrica-estacion .titulo"
                           )
-                          if (destacado) {
-                            const textNode =
-                              destacado.querySelector("span.label").nextSibling
-                            return textNode.nodeValue.trim()
+                          if (titulo && titulo.textContent.includes(titleText)) {
+                            const destacado = container.querySelector(
+                              ".dato-metrica-estacion.destacada"
+                            )
+                            if (destacado) {
+                              const textNode =
+                                destacado.querySelector("span.label").nextSibling
+                              return textNode.nodeValue.trim()
+                            }
                           }
                         }
+                        return null
                       }
-                      return null
+                      return [
+                        getMetricValue("COTA EMBALSE"),
+                        getMetricValue("VOLUMEN"),
+                        getMetricValue("VOLUMEN PORCENTUAL"),
+                      ]
                     }
-                    return [
-                      getMetricValue("COTA EMBALSE"),
-                      getMetricValue("VOLUMEN"),
-                      getMetricValue("VOLUMEN PORCENTUAL"),
-                    ]
-                  }
-                )
+                  )
 
-                const scrapedEmbalseName = await page.$eval(
-                  ".titulo-tarjeta-estacion",
-                  (node) => node.innerText
-                )
+                  const scrapedEmbalseName = await page.$eval(
+                    ".titulo-tarjeta-estacion",
+                    (node) => node.innerText
+                  )
 
-                AllData.push({
-                  embalse: scrapedEmbalseName.split("-").slice(1).join("-").trim(),
-                  volumen: volumenValue,
-                  porcentaje: porcentajeValue,
-                  cota: cotaValue,
-                  timestamp: new Date().toISOString(),
-                })
-                processedEmbalses.add(embalseName)
+                  console.log(`📝 Metrics found for ${embalseName}:`)
+                  console.log(`   • Cota: ${cotaValue || "N/A"}`)
+                  console.log(`   • Volumen: ${volumenValue || "N/A"}`)
+                  console.log(`   • Porcentaje: ${porcentajeValue || "N/A"}`)
+
+                  AllData.push({
+                    embalse: scrapedEmbalseName.split("-").slice(1).join("-").trim(),
+                    volumen: volumenValue,
+                    porcentaje: porcentajeValue,
+                    cota: cotaValue,
+                    timestamp: new Date().toISOString(),
+                  })
+                  processedEmbalses.add(embalseName)
+                  console.log(`✅ Successfully processed ${embalseName}`)
+                } catch (error) {
+                  console.error(
+                    `❌ Error processing metrics for ${embalseName}:`,
+                    error.message
+                  )
+                }
+
+                console.log(`🔒 Closing dialog for ${embalseName}...`)
+                const closeButtonSelector = "#cerrar-dialog-estacion"
+                await navigateAndClick(page, closeButtonSelector)
+                console.log(`👋 Finished processing ${embalseName}\n`)
               } catch (error) {
                 console.error(
-                  `❌ Error processing metrics for ${embalseName}:`,
+                  `💥 Fatal error processing embalse ${embalseName || "unknown"}:`,
                   error.message
                 )
               }
-              const closeButtonSelector = "#cerrar-dialog-estacion"
-              await navigateAndClick(page, closeButtonSelector)
             }
           }
         }
