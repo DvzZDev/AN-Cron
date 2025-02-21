@@ -13,6 +13,8 @@ on:
 jobs:
   run-scripts:
     runs-on: ubuntu-latest
+    env:
+    SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
     steps:
       - name: Checkout repository
