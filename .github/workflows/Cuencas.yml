@@ -1,0 +1,31 @@
+name: Data Cuencas
+
+on:
+  schedule:
+    - cron: "59 23 * * 0"
+      push:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-scripts:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Catch Data Cuencas
+        run: node cuencas.js
