@@ -14,7 +14,7 @@ jobs:
   run-scripts:
     runs-on: ubuntu-latest
     env:
-    SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+    SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }} # This is the secret key for the Supabase API
 
     steps:
       - name: Checkout repository
