@@ -1,11 +1,17 @@
 {
-  "type": "module",
+  "name": "an-cron",
+  "version": "1.0.0",
+  "description": "Automated data collection scripts",
+  "main": "cuencas.js",
+  "scripts": {
+    "start": "node cuencas.js"
+  },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@playwright/test": "^1.48.2",
     "@supabase/supabase-js": "^2.45.4",
     "adm-zip": "^0.5.16",
-    "axios": "^1.7.9",
+    "axios": "^1.6.7",
     "cheerio": "^1.0.0",
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
@@ -14,11 +20,13 @@
     "path": "^0.12.7",
     "pdf-parse": "^1.1.1",
     "pg": "^8.13.1",
-    "unicode": "^14.0.0"
+    "unicode": "^14.0.0",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
     "eslint": "^9.12.0",
     "globals": "^15.10.0"
-  }
+  },
+  "packageManager": "pnpm@8.15.3"
 }
