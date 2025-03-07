@@ -23,6 +23,9 @@ jobs:
         run: |
           STORE_PATH=$(pnpm store path --silent)
           echo "STORE_PATH=$STORE_PATH" >> $GITHUB_ENV
+        env:
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       - uses: actions/cache@v3
         with:
           path: ${{ env.STORE_PATH }}
