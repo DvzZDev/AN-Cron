@@ -44,3 +44,6 @@ jobs:
 
       - name: Catch Data 2025
         run: pnpm node Embalses2025.js
+
+      - name: Embalses PT
+        run: pnpm node datosEmbalsesPt.js
